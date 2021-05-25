@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <style>
+      @font-face {
+        font-family: "error";
+        src: url("error.ttf");
+      }
+      * {
+        -moz-user-select: none;
+        -o-user-select: none;
+        -khtml-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      ::-webkit-scrollbar {
+        width: 7px;
+        height: 7px;
+        background-color: #f5f5f5;
+      }
+      ::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        background-color: #f5f5f5;
+      }
+      ::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+        background-color: #c8c8c8;
+      }
+      body {
+        margin: 10px;
+        background: #000;
+        color: #fff;
+      }
+      .title {
+        font-size: 40px;
+      }
+      .card {
+        margin: 10px auto;
+        padding: 5px 15px 10px 15px;
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        border-radius: 5px;
+      }
+      .date {
+        font-size: 26px;
+        font-weight: bold;
+      }
+      .text {
+        display: inline-block;
+        word-wrap: break-word;
+        word-break: break-all;
+        transition: filter 0.5s;
+        line-height: 20px;
+      }
+      .error-text {
+        font-family: "error";
+      }
+      .in-enter {
+        opacity: 0;
+        filter: blur(20px);
+      }
+      .in-enter-to {
+        opacity: 1;
+        filter: blur(0);
+      }
+      .in-enter-active {
+        transition: all 0.5s;
+      }
+    </style>
+    <title>□□□</title>
+  </head>
+  <body>
+    <div
+      id="hrk"
+      style="display: none"
+      :style="{display: ready ? 'block' : 'none'}"
+    >
+      <transition name="in" appear>
+        <div>
+          <div class="title">这是标题</div>
+          <div v-for="(item, index) in msgList" :key="index" class="card">
+            <div class="date">3.{{index + 3}}</div>
+            <hr />
+            <div
+              class="text"
+              :class="{'error-text': !normal}"
+              :style="{filter: `blur(${blur}px)`}"
+            >
+              {{item}}
+            </div>
+          </div>
+        </div>
+      </transition>
+    </div>
+    <script>
+      var hrk = new Vue({
+        el: "#hrk",
+        data: () => ({
+          ready: false,
+          normal: false,
+          blur: 0.5,
+          list: ["A", "B", "C", "D", "E", "F", "G"],
+          msgList: [],
+        }),
+        methods: {
+          getText(num) {
+            let temp = "";
+            for (let i = 0; i < num; i++) {
+              temp += this.list[Math.floor(Math.random() * this.list.length)];
+            }
+            return temp;
+          },
+        },
+        mounted() {
+          for (let i = 0; i < 10; i++) {
+            this.msgList.push(this.getText(Math.random() * 500));
+          }
+
+          this.ready = true;
+
+          setTimeout(() => {
+            this.blur = 20;
+            setTimeout(() => {
+              this.blur = 0;
+              this.normal = true;
+            }, 500);
+          }, 2000);
+        },
+      });
+    </script>
+  </body>
+</html>
