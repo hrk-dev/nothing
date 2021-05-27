@@ -4,11 +4,11 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="res/vue.min.js"></script>
     <style>
       @font-face {
         font-family: "error";
-        src: url("error.ttf");
+        src: url("res/error.ttf");
       }
       * {
         -moz-user-select: none;
@@ -41,14 +41,33 @@
         background: #000;
         color: #fff;
       }
+      .bg {
+        z-index: -1;
+        height: 100vh;
+        width: 100vw;
+        position: fixed;
+        top: 0;
+        left: 0;
+        transition: all 0.5s;
+      }
       .title {
         font-size: 40px;
+        line-height: 50px;
+        filter: blur(2px);
+      }
+      .title:hover {
+        filter: blur(0);
       }
       .card {
         margin: 10px auto;
         padding: 5px 15px 10px 15px;
         border: 2px solid rgba(255, 255, 255, 0.5);
         border-radius: 5px;
+        transition: all 0.5s;
+        filter: blur(2px);
+      }
+      .card:hover {
+        filter: blur(0);
       }
       .date {
         font-size: 26px;
@@ -58,7 +77,7 @@
         display: inline-block;
         word-wrap: break-word;
         word-break: break-all;
-        transition: filter 0.5s;
+        transition: all 0.5s;
         line-height: 20px;
       }
       .error-text {
@@ -76,64 +95,124 @@
         transition: all 0.5s;
       }
     </style>
-    <title>□□□</title>
+    <title>□□□□□</title>
   </head>
   <body>
     <div
-      id="hrk"
+      id="diary"
       style="display: none"
-      :style="{display: ready ? 'block' : 'none'}"
+      :style="{display: ready ? 'block' : 'none', color: normal ? '#333': ''}"
+      @click="change"
     >
+      <div class="bg" :style="{'background': normal ? '#fff': '#000'}"></div>
       <transition name="in" appear>
         <div>
-          <div class="title">这是标题</div>
-          <div v-for="(item, index) in msgList" :key="index" class="card">
-            <div class="date">3.{{index + 3}}</div>
+          <div
+            class="title"
+            :class="{'error-text': !normal}"
+            :style="{filter: normal ? 'blur(0) !important' : ''}"
+          >
+            DIARY
+          </div>
+          <div
+            v-for="(item, index) in msgList"
+            :key="index"
+            class="card"
+            :style="{filter: normal ? 'blur(0) !important' : '', 'border-color': normal ? '#333' : ''}"
+          >
+            <div class="date">{{item.date}}</div>
             <hr />
             <div
               class="text"
               :class="{'error-text': !normal}"
               :style="{filter: `blur(${blur}px)`}"
             >
-              {{item}}
+              {{item.msg}}
             </div>
           </div>
         </div>
       </transition>
     </div>
     <script>
-      var hrk = new Vue({
-        el: "#hrk",
+      var diary = new Vue({
+        el: "#diary",
         data: () => ({
           ready: false,
           normal: false,
+          encryption: true,
           blur: 0.5,
-          list: ["A", "B", "C", "D", "E", "F", "G"],
-          msgList: [],
+          msgList: [
+            {
+              date: "3.3",
+              msg: "JUU1JTlCJUEwJUU0JUI4JUJBJUU1JUFFJTlFJUU1JTlDJUE4JUU2JTk4JUFGJUU0JUI4JThEJUU3JTlGJUE1JUU5JTgxJTkzJUU1JUJBJTk0JUU4JUFGJUE1JUU1JTg2JTk5JUU0JUJBJTlCJUU0JUJCJTgwJUU0JUI5JTg4JUU2JTg5JTgwJUU0JUJCJUE1JUU1JUIwJUIxJUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0",
+            },
+            {
+              date: "3.4",
+              msg: "QmVjYXVzZSUyMEklMjByZWFsbHklMjBkb24ndCUyMGtub3clMjB3aGF0JTIwdG8lMjB3cml0ZSUyQyUyMHNvJTIwSSUyMGp1c3QlMjB3YW50JTIwdG8lMjB3cml0ZSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYSUyMGFiYQ==",
+            },
+            {
+              date: "3.5",
+              msg: "JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0JUU5JTk4JUJGJUU1JUI3JUI0",
+            },
+          ],
         }),
         methods: {
-          getText(num) {
-            let temp = "";
-            for (let i = 0; i < num; i++) {
-              temp += this.list[Math.floor(Math.random() * this.list.length)];
+          encoded() {
+            if (!this.encryption) {
+              for (const i in this.msgList) {
+                this.msgList[i].msg = window.btoa(
+                  encodeURIComponent(this.msgList[i].msg)
+                );
+              }
+              this.encryption = !this.encryption
             }
-            return temp;
           },
+          decode() {
+            if (this.encryption) {
+              for (const i in this.msgList) {
+                this.msgList[i].msg = decodeURIComponent(
+                  window.atob(this.msgList[i].msg)
+                );
+              }
+              this.encryption = !this.encryption
+            }
+          },
+          setNormal() {
+            document.title = 'Diary'
+            this.blur = 10;
+            setTimeout(() => {
+              this.decode();
+              this.blur = 0;
+              this.normal = true;
+              localStorage.setItem("hrk", "?");
+            }, 500);
+          },
+          setAbnormal() {
+            localStorage.removeItem("hrk");
+            document.title = '□□□□□'
+            this.blur = 10;
+            setTimeout(() => {
+              this.encoded();
+              this.blur = 0;
+              this.normal = false;
+            }, 500);
+          },
+          change() {
+            if (this.normal) {
+              this.setAbnormal()
+            } else {
+              this.setNormal()
+            }
+          }
         },
         mounted() {
-          for (let i = 0; i < 10; i++) {
-            this.msgList.push(this.getText(Math.random() * 500));
+          this.normal = !!localStorage.getItem("hrk");
+          if (this.normal) {
+            this.decode();
+            document.title = 'Diary'
           }
 
           this.ready = true;
-
-          setTimeout(() => {
-            this.blur = 20;
-            setTimeout(() => {
-              this.blur = 0;
-              this.normal = true;
-            }, 500);
-          }, 2000);
         },
       });
     </script>
