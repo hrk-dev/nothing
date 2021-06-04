@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="res/vue.min.js"></script>
+    <script src="res/pusher.min.js"></script>
+    <script src="res/axios.min.js"></script>
     <style>
       @font-face {
         font-family: "error";
@@ -134,9 +136,25 @@
       </transition>
     </div>
     <script>
+      Pusher.logToConsole = true;
+
+      var pusher = new Pusher("d392f65ca7b23a30e14c", {
+        cluster: "ap1",
+      });
+
+      var channel = pusher.subscribe("hrk-blog");
+      channel.bind("set-normal", () => {
+        diary.setNormal();
+      });
+      channel.bind("set-abnormal", () => {
+        diary.setAbnormal();
+      });
+
       var diary = new Vue({
         el: "#diary",
         data: () => ({
+          messages: [],
+          wait: false,
           ready: false,
           normal: false,
           encryption: true,
@@ -164,7 +182,7 @@
                   encodeURIComponent(this.msgList[i].msg)
                 );
               }
-              this.encryption = !this.encryption
+              this.encryption = !this.encryption;
             }
           },
           decode() {
@@ -174,42 +192,55 @@
                   window.atob(this.msgList[i].msg)
                 );
               }
-              this.encryption = !this.encryption
+              this.encryption = !this.encryption;
             }
           },
           setNormal() {
-            document.title = 'Diary'
+            if (this.normal) return
+            document.title = "Diary";
             this.blur = 10;
             setTimeout(() => {
               this.decode();
               this.blur = 0;
               this.normal = true;
+              this.wait = false
               localStorage.setItem("hrk", "?");
             }, 500);
           },
           setAbnormal() {
+            if (!this.normal) return
             localStorage.removeItem("hrk");
-            document.title = '□□□□□'
+            document.title = "□□□□□";
             this.blur = 10;
             setTimeout(() => {
               this.encoded();
               this.blur = 0;
               this.normal = false;
+              this.wait = false
             }, 500);
           },
           change() {
+            if (this.wait) return
             if (this.normal) {
-              this.setAbnormal()
+              axios.get('https://hrk-serve.vercel.app/api/abnormal?k=hrk')
             } else {
-              this.setNormal()
+              axios.get('https://hrk-serve.vercel.app/api/normal?k=hrk')
             }
-          }
+            this.wait = true
+          },
         },
         mounted() {
           this.normal = !!localStorage.getItem("hrk");
+          axios.get("https://hrk-serve.vercel.app/api/state").then((res) => {
+            if (res.data === 1) {
+              this.setNormal();
+            } else {
+              this.setAbnormal();
+            }
+          });
           if (this.normal) {
             this.decode();
-            document.title = 'Diary'
+            document.title = "Diary";
           }
 
           this.ready = true;
