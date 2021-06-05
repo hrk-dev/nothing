@@ -15,8 +15,15 @@
       id="diary"
       style="display: none"
       :style="{display: ready ? 'block' : 'none', color: normal ? '#333': ''}"
-      @click="change"
     >
+      <transition name="in" appear>
+        <div class="loading" v-if="loading">
+          <div class="animation">
+            <div class="ball-1"></div>
+            <div class="ball-2"></div>
+          </div>
+        </div>
+      </transition>
       <div class="bg" :style="{'background': normal ? '#fff': '#000'}"></div>
       <transition name="in" appear>
         <div>
@@ -31,14 +38,15 @@
             v-for="(item, index) in msgList"
             :key="index"
             class="card"
-            :style="{filter: normal ? 'blur(0) !important' : '', 'border-color': normal ? '#333' : ''}"
+            :style="{filter: item.normal ? 'blur(0) !important' : '', 'border-color': item.normal ? '#333' : ''}"
+            @click="change(index)"
           >
             <div class="date">{{item.date}}</div>
             <hr />
             <div
               class="text"
-              :class="{'error-text': !normal}"
-              :style="{filter: `blur(${blur}px)`}"
+              :class="{'error-text': !item.normal}"
+              :style="{filter: `blur(${item.blur}px)`}"
             >
               {{item.msg}}
             </div>
